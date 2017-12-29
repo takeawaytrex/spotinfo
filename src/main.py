@@ -11,8 +11,8 @@ import urllib.parse
 app = Flask(__name__)
 
 #  Client Keys
-CLIENT_ID = "f73f551e914f4915a7c38d75fa074cfb"
-CLIENT_SECRET = "de1227a6f8144ed1a0094f3eb8878e34"
+CLIENT_ID = ""
+CLIENT_SECRET = ""
 
 # Spotify URLS
 SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize"
