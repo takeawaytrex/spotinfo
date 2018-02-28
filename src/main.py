@@ -6,6 +6,14 @@ import urllib
 import urllib.parse
 import os
 import sqlite3
+import errno
+
+
+# TODO: generate session cookie
+# TODO: store session cookie
+# TODO: when auth key received from spotify, store alongside session cookie
+# TODO:                       so that this can be used for further API keys
+
 
 # Authentication Steps, paramaters, and responses are defined at https://developer.spotify.com/web-api/authorization-guide/
 # Visit this url to see all the steps, parameters, and expected response.
@@ -40,24 +48,6 @@ auth_query_parameters = {
     # "show_dialog": SHOW_DIALOG_str,
     "client_id": CLIENT_ID
 }
-
-
-conn = sqlite3.connect('spotinfo.db')
-c = conn.cursor()
-
-def db_init():
-    cursor = db.cursor()
-    cursor.execute('''
-    CREATE TABLE users(id INTEGER PRIMARY KEY, name TEXT,
-                       phone TEXT, email TEXT unique, password TEXT)
-''')
-    conn.commit()
-
-# TODO: generate session cookie
-# TODO: store session cookie
-# TODO: when auth key received from spotify, store alongside session cookie
-# TODO:                       so that this can be used for further API keys
-
 
 @app.route("/")
 def index():
@@ -153,6 +143,7 @@ def get_most_followed(playlists, authorization_header):
         endpoint = "{}".format(playlist["href"])
         response = requests.get(endpoint, headers=authorization_header)
         data = json.loads(response.text)
+    return ""
         
 
 
@@ -162,7 +153,6 @@ if __name__ == "__main__":
 
 def goodbye():
     print("Goodbye")
-    conn.close()
 
 import atexit
 atexit.register(goodbye)
