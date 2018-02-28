@@ -4,6 +4,7 @@ import requests
 import base64
 import urllib
 import urllib.parse
+import os
 
 # Authentication Steps, paramaters, and responses are defined at https://developer.spotify.com/web-api/authorization-guide/
 # Visit this url to see all the steps, parameters, and expected response.
@@ -11,8 +12,8 @@ import urllib.parse
 app = Flask(__name__)
 
 #  Client Keys
-CLIENT_ID = ""
-CLIENT_SECRET = ""
+CLIENT_ID = os.environ["SPOTIFY_CLIENT_ID"]
+CLIENT_SECRET = os.environ["SPOTIFY_CLIENT_SECRET"]
 
 # Spotify URLS
 SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize"
