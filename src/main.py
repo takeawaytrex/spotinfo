@@ -5,6 +5,7 @@ import base64
 import urllib
 import urllib.parse
 import os
+import sqlite3
 
 # Authentication Steps, paramaters, and responses are defined at https://developer.spotify.com/web-api/authorization-guide/
 # Visit this url to see all the steps, parameters, and expected response.
@@ -40,6 +41,24 @@ auth_query_parameters = {
     "client_id": CLIENT_ID
 }
 
+
+conn = sqlite3.connect('spotinfo.db')
+c = conn.cursor()
+
+def db_init():
+    cursor = db.cursor()
+    cursor.execute('''
+    CREATE TABLE users(id INTEGER PRIMARY KEY, name TEXT,
+                       phone TEXT, email TEXT unique, password TEXT)
+''')
+    conn.commit()
+
+# TODO: generate session cookie
+# TODO: store session cookie
+# TODO: when auth key received from spotify, store alongside session cookie
+# TODO:                       so that this can be used for further API keys
+
+
 @app.route("/")
 def index():
     # Auth Step 1: Authorization
@@ -57,6 +76,7 @@ def callback():
         "code": str(auth_token),
         "redirect_uri": REDIRECT_URI
     }
+
     base64encoded = base64.urlsafe_b64encode("{}:{}".format(CLIENT_ID, CLIENT_SECRET).encode('UTF-8')).decode('ascii')
     headers = {"Authorization": "Basic {}".format(base64encoded)}
     post_request = requests.post(SPOTIFY_TOKEN_URL, data=code_payload, headers=headers)
@@ -70,6 +90,11 @@ def callback():
     refresh_token = response_data["refresh_token"]
     token_type = response_data["token_type"]
     expires_in = response_data["expires_in"]
+
+    print("Access token: {}".format(access_token))
+    print("Refresh token: {}".format(refresh_token))
+    print("Token type: {}".format(token_type))
+    print("Expires in: {}".format(expires_in))
 
     # Auth Step 6: Use the access token to access Spotify API
     authorization_header = {"Authorization":"Bearer {}".format(access_token)}
@@ -133,3 +158,12 @@ def get_most_followed(playlists, authorization_header):
 
 if __name__ == "__main__":
     app.run(debug=True,port=PORT)
+
+
+def goodbye():
+    print("Goodbye")
+    conn.close()
+
+import atexit
+atexit.register(goodbye)
+
